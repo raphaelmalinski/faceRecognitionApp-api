@@ -1,15 +1,18 @@
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const database = {
     users: [
         {
             id: '123',
             name: 'Raphael',
+            password: 'bafenta',
             email: 'raphael@gmail.com',
             entries: 0,
             joined: new Date()
@@ -17,6 +20,7 @@ const database = {
         {
             id: '124',
             name: 'Vitoria',
+            password: 'hulk',
             email: 'vitoria@gmail.com',
             entries: 0,
             joined: new Date()
