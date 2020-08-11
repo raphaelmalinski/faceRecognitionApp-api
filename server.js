@@ -1,6 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcrypt-nodejs');
 const cors = require('cors');
+const knex = require('knex');
+const { response } = require('express');
+
+const db = knex({
+    client: 'pg',
+    connection: {
+        host: '127.0.0.1',
+        user: 'raphael',
+        password: 'admin',
+        database: 'faceRecognitionApp'
+    }
+});
+
 
 const app = express();
 
