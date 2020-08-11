@@ -120,13 +120,16 @@ app.post('/register', (req, res) => {
 
 app.get('/profile/:id', (req, res) => {
     const { id } = req.params;
-    const user = searchUser(id);
-    if (user === false) {
-        res.status(404).json('not found');
-    }
-    else {
-        res.json(user);
-    }
+    db.select('*').from('users').where({ id })
+        .then(user => {
+            if (user.length) {
+                res.json(user[0]);
+            } else {
+                res.status(400).json('not found');
+            }
+
+        })
+        .catch(err => res.status(400).json('error getting user'));
 });
 
 app.put('/image', (req, res) => {
