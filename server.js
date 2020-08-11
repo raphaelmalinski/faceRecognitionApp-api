@@ -14,56 +14,10 @@ const db = knex({
     }
 });
 
-
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-
-const database = {
-    users: [
-        {
-            id: '123',
-            name: 'Raphael',
-            password: 'bafenta',
-            email: 'raphael@gmail.com',
-            entries: 0,
-            joined: new Date()
-        },
-        {
-            id: '124',
-            name: 'Vitoria',
-            password: 'hulk',
-            email: 'vitoria@gmail.com',
-            entries: 0,
-            joined: new Date()
-        }
-    ],
-    login: [
-        {
-            id: '987',
-            hash: '',
-            email: 'raphael@gmail.com'
-        }
-    ]
-}
-
-const searchUser = (id) => {
-    let found = false;
-    let userReturn;
-    database.users.forEach(user => {
-        if (user.id === id) {
-            found = true;
-            userReturn = user;
-            return;
-        }
-    });
-    if (!found) {
-        return false;
-    } else {
-        return userReturn;
-    }
-}
 
 app.get('/', (req, res) => {
     res.send(database.users);
@@ -134,26 +88,14 @@ app.get('/profile/:id', (req, res) => {
 
 app.put('/image', (req, res) => {
     const { id } = req.body;
-    const user = searchUser(id);
-    if (user === false) {
-        res.status(404).json('not found');
-    } else {
-        user.entries++;
-        res.json(user.entries);
-    }
+    db('users').where('id', '=', id)
+        .increment('entries', 1)
+        .returning('entries')
+        .then(entries => {
+            res.json(entries[0]);
+        })
+        .catch(err => res.status(400).json('unable to get entries'));
 });
-
-// bcrypt.hash("bacon", null, null, function(err, hash) {
-//     // Store hash in your password DB.
-// });
-
-// // Load hash from your password DB.
-// bcrypt.compare("bacon", hash, function(err, res) {
-//     // res == true
-// });
-// bcrypt.compare("veggies", hash, function(err, res) {
-//     // res = false
-// });
 
 app.listen(3000, () => {
     console.log('app is running on port 3000');
